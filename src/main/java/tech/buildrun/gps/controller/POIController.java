@@ -49,10 +49,14 @@ public class POIController {
 
         var body = repository.findAllNearMe(xMin, xMax, yMin, yMax)
                 .stream()
-                .filter(p -> Point2D.distance(p.getX(), p.getY(), x, y) <= dmax)
+                .filter(p -> distanceBetweenPoints(p.getX(), p.getY(), x, y) <= dmax)
                 .toList();
 
 
         return ResponseEntity.ok(body);
+    }
+
+    public Double distanceBetweenPoints(Long x1, Long y1, Long x2, Long y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 }
