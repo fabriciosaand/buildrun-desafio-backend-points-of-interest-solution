@@ -1,21 +1,22 @@
 package tech.buildrun.poi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import tech.buildrun.poi.entity.PointOfInterest;
 
-import java.util.List;
+import tech.buildrun.poi.entity.PointOfInterest;
 
 public interface PointOfInterestRepository extends JpaRepository<PointOfInterest, Long> {
 
-
-    @Query("""
-            SELECT p FROM PointOfInterest p
-            WHERE (p.x >= :xMin AND p.x <= :xMax AND p.y >= :yMin AND p.y <= :yMax)
-            """)
-    List<PointOfInterest> findNearMe(@Param("xMin") long xMin,
-                                     @Param("xMax") long xMax,
-                                     @Param("yMin") long yMin,
-                                     @Param("yMax") long yMax);
+        
+        @Query(value = """
+                SELECT p.* FROM tb_points_of_interest p
+                WHERE SQRT(POWER((p.x - :refX), 2) + POWER((p.y - :refY), 2)) <= :dMax
+                """,
+                nativeQuery = true)
+        List<PointOfInterest> findNearMe(@Param("refX") long refX,
+                        @Param("refY") long refY,
+                        @Param("dMax") long dMax);
 }
